@@ -1,5 +1,5 @@
 import type { AxiosResponse } from "axios";
-import type { HomeCarouselsView } from "./home.type";
+import type { HomeCarouselsView } from "./type";
 import axios from "@/api/axios";
 
 // 缓存数据，减少一定时间内的重复请求

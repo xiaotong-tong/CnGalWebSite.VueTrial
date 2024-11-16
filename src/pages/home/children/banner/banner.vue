@@ -59,7 +59,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { Link } from "@p/index";
 import IconButton from "@/components/icon/iconButton.vue";
-import { useBanner } from "../home.hook";
+import { useBanner } from "./hook";
 
 const { list: bannerList, showNo } = useBanner();
 

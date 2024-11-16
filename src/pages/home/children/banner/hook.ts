@@ -1,7 +1,7 @@
-import type { HomeCarouselsView } from "../home.type";
+import type { HomeCarouselsView } from "./type";
 import { ref, watch } from "vue";
 import { nonRepeatRandomList } from "@/utils/random";
-import { getHomeCarouselsView } from "./home.api";
+import { getHomeCarouselsView } from "./api";
 
 const list = ref<HomeCarouselsView[]>([]);
 const allList = ref<HomeCarouselsView[]>([]);
@@ -10,7 +10,7 @@ const showNo = ref(6);
 const sliceBannerList = () => {
 	const allLength = allList.value.length;
 
-	if (allLength <= showNo) {
+	if (allLength <= showNo.value) {
 		list.value = allList.value;
 	} else {
 		// 选取列表中前三项，以及在其它项中随机选取三项
