@@ -1,5 +1,5 @@
 <template>
-	<div class="container">
+	<div class="box">
 		<div
 			class="banner-item"
 			v-for="(item, index) in bannerList"
@@ -157,23 +157,23 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.container {
+.box {
 	--banner-img-aspect-ratio: 1024 / 200;
 	--banner-prev-next-btn-size: 30px;
 	--banner-btn-bg-color: #333;
 }
-.container {
+.box {
 	display: flex;
 	overflow: hidden;
 	position: relative;
 }
-.container:focus-within {
+.box:focus-within {
 	outline: thin dotted #c9d1d9;
 	outline-offset: 1px;
 }
 
 /* 这里是占位框 为了更方便的将所有的 item 叠放在一起 */
-.container::before {
+.box::before {
 	content: "";
 	flex: 1 0 100%;
 }
@@ -182,6 +182,8 @@ onUnmounted(() => {
 	margin-inline-start: -100%;
 	z-index: -1;
 	opacity: 0;
+	border-radius: 20px;
+	overflow: hidden;
 }
 .banner-active {
 	opacity: 1;

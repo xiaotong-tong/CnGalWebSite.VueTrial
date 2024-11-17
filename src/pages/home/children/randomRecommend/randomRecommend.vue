@@ -30,12 +30,18 @@
 			<FieldsetCard
 				class="item box-border h-full flex-none"
 				v-for="item in list"
-				:key="item.url"
+				:key="'copy' + item.url"
 				:style="{
 					width: itemWidth + 'px'
 				}"
 			>
+				<div>
+					<img :src="item.image" :alt="item.name" class="w-full" />
+				</div>
 				<div>{{ item.name }}</div>
+				<div class="line-clamp-3">
+					{{ item.briefIntroduction }}
+				</div>
 			</FieldsetCard>
 		</div>
 	</div>
@@ -48,46 +54,53 @@ import { useList } from "./hook";
 import { gsap } from "gsap";
 import { useElementSize } from "@vueuse/core";
 
-const { list, finished } = useList();
+interface Props {
+	animetDelay?: number;
+	animeDuration?: number;
+	gapX?: number;
+}
 
-const gapX = ref(8);
+const { animetDelay = 3, animeDuration = 1, gapX = 8 } = defineProps<Props>();
+
+const { list, finished } = useList();
 
 const container = ref();
 const scrollContent = ref();
 
 const { width } = useElementSize(container);
 
-const itemWidth = computed(() => (width.value - gapX.value * 3) / 4);
+const itemWidth = computed(() => (width.value - gapX * 3) / 4);
 
 watch(finished, (value) => {
 	if (value) {
 		nextTick(() => {
 			// 需要 list 渲染完成后才能获取到正确的 scrollContent 的宽度
-			const contentWidth = scrollContent.value.scrollWidth / 2; // 修改为一半的宽度
+			const contentWidth = scrollContent.value.scrollWidth / 2 + gapX / 2; // 修改为一半的宽度加上间隙的一半
 
-			const timeline = gsap.timeline({ repeat: -1 });
-
-			timeline.to(scrollContent.value, {
-				x: -contentWidth,
-				duration: 10 * list.value.length - 5 * list.value.length,
-				ease: "none",
-				modifiers: {
-					x: gsap.utils.unitize((x) => parseFloat(x) % contentWidth)
-				}
-			});
-
-			// 每滚动 5秒后，暂停 5秒
-			function toggleAnime(pause: boolean) {
-				if (pause) {
-					timeline.pause();
-				} else {
-					timeline.play();
-				}
-				setTimeout(() => {
-					toggleAnime(!pause);
-				}, 5000);
+			function scrollAnime(index: number) {
+				gsap.to(scrollContent.value, {
+					x: -(itemWidth.value + gapX) * index,
+					duration: animeDuration,
+					yoyo: true,
+					ease: "power1.inOut",
+					modifiers: {
+						x: gsap.utils.unitize((x) => parseFloat(x) % contentWidth)
+					},
+					onComplete() {
+						setTimeout(() => {
+							if (index === list.value.length) {
+								scrollAnime(1);
+								return;
+							}
+							scrollAnime(index + 1);
+						}, animetDelay * 1000);
+					}
+				});
 			}
-			toggleAnime(true);
+
+			setTimeout(() => {
+				scrollAnime(0);
+			}, animetDelay * 1000);
 		});
 	}
 });
